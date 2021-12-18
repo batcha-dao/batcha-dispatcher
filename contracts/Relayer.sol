@@ -2,7 +2,8 @@
 
 pragma solidity ^0.8.0;
 
-// import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@chainlink/contracts/src/v0.8/VRFConsumerBase.sol";
 
 /**
  * @title Relayer
@@ -13,7 +14,13 @@ pragma solidity ^0.8.0;
  * - https://github.com/compound-finance/compound-protocol/blob/v2.8.1/contracts/Timelock.sol
  * - https://github.com/Uniswap/v2-core/blob/v1.0.1/contracts/UniswapV2ERC20.sol
  */
-contract Relayer /* is Ownable */ {
+contract Relayer is
+    Ownable,
+    VRFConsumerBase(
+        0xdD3782915140c8f3b190B5D67eAc6dc5760C46E9, // VRF Coordinator
+        0xa36085F69e2889c224210F603D836748e7dC0088  // LINK Token
+    )
+{
     // TODO: gas limit per Call.
 
     struct Call {
@@ -30,6 +37,28 @@ contract Relayer /* is Ownable */ {
         bool success;
         bytes returnData;
         uint256 returnWei;
+    }
+
+    // Chainlink VRF
+    bytes32 public constant keyHash = 0x6c3699283bda56ad74f6b855546325b68d482e983852a7a82979cc4807b641f4;
+    uint256 public fee = 0.1 * 10 ** 18; // 0.1 LINK (Varies by network)
+    function feeUpdate(uint newFee) public onlyOwner { fee = newFee; }
+
+    uint256 public randomResult;
+
+    /** 
+     * @notice Requests randomness 
+     */
+    function getRandomNumber() public returns (bytes32 requestId) {
+        require(LINK.balanceOf(address(this)) >= fee, "Not enough LINK - fill contract with faucet");
+        return requestRandomness(keyHash, fee);
+    }
+
+    /**
+     * @notice Callback function used by VRF Coordinator
+     */
+    function fulfillRandomness(bytes32 requestId, uint256 randomness) internal override {
+        randomResult = randomness;
     }
 
     // ETH Vault
@@ -49,7 +78,7 @@ contract Relayer /* is Ownable */ {
     }
 
     /**
-     * @dev Get bmsg from multiple `calls`.
+     * @notice Get bmsg from multiple `calls`.
      */
     function bmsg(Call[] memory calls) public pure returns (bytes32) {
         return keccak256(
@@ -61,7 +90,7 @@ contract Relayer /* is Ownable */ {
     }
 
     /**
-     * @dev Get bmsg from a `singleCall`.
+     * @notice Get bmsg from a `singleCall`.
      */
     function bmsg(Call memory singleCall) public pure returns (bytes32) {
         return keccak256(
@@ -73,7 +102,7 @@ contract Relayer /* is Ownable */ {
     }
 
     /**
-     * @dev Implement IBATCH and ETH receiving logic.
+     * @notice Implement IBATCH and ETH receiving logic.
      */
     function tryDispatch(
         Call[] memory calls, // be a bmsg
@@ -109,7 +138,7 @@ contract Relayer /* is Ownable */ {
     }
 
     /**
-     * @dev Single transaction call.
+     * @notice Single transaction call.
      * Using for RTC (Remote Transaction Call) relaying.
      */
     function trySingleCall(

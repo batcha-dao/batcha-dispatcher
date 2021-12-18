@@ -1,7 +1,8 @@
 {
   "dependencies": {
+    "@chainlink/contracts": "^0.3.0",
     "@openzeppelin/contracts": "^4.4.1",
-    "ganache-cli": "^6.12.2",
+    "ganache-cli": "^6.1.8",
     "solc": "^0.8.10",
     "solidity-docgen": "^0.5.16"
   }
