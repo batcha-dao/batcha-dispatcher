@@ -5,12 +5,13 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
- * @title Dispatcher
+ * @title Relayer
  * 
- * Inspired by multicall and timelock contract.
+ * Inspired by multicall, timelock and permit contract.
  *
  * - https://github.com/makerdao/multicall/blob/master/src/Multicall.sol
  * - https://github.com/compound-finance/compound-protocol/blob/v2.8.1/contracts/Timelock.sol
+ * - https://github.com/Uniswap/v2-core/blob/v1.0.1/contracts/UniswapV2ERC20.sol
  */
 contract Dispatcher is Ownable {
     // TODO: gas limit per Call.
