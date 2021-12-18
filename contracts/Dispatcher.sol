@@ -5,7 +5,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
- * @title Relayer
+ * @title Dispatcher
  * 
  * Inspired by multicall, timelock and permit contract.
  *
