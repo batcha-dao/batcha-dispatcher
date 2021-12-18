@@ -12,7 +12,7 @@ Smart contracts of BATCHA!
 
 # Deploy
 
-### Run ganache-cli
+### Run Ganache CLI
 
 ```
 $ ganache-cli -b 15
@@ -85,6 +85,23 @@ $ truffle migrate
   Gas usage: 27549
   Block Number: 9
   Block Time: Sun Dec 19 2021 01:37:09 GMT+0900 (Korean Standard Time)
+```
+
+# Get Signature (v, r, s)
+
+```
+$ truffle console
+
+truffle(development)> web3.eth.accounts.sign("Hello, World!", "0x9fcdf25714e85405689382d7be5d454dcd05f295113b1101080c0795591294f7")
+
+{
+  message: 'Hello, World!',
+  messageHash: '0xc8ee0d506e864589b799a645ddb88b08f5d39e8049f9f702b3b61fa15e55fc73',
+  v: '0x1b',
+  r: '0x0a390e62fb6afa20cda8fd29943623420d77606abad461aef13b8949ede3cc99',
+  s: '0x3d7631d277b0b67bfc0a0dd45ec303dcf4eac66c0d5c97a873dd26fc4db6f122',
+  signature: '0x0a390e62fb6afa20cda8fd29943623420d77606abad461aef13b8949ede3cc993d7631d277b0b67bfc0a0dd45ec303dcf4eac66c0d5c97a873dd26fc4db6f1221b'
+}
 ```
 
 # Documentation

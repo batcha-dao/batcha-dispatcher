@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
+// import "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
  * @title Relayer
@@ -13,7 +13,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
  * - https://github.com/compound-finance/compound-protocol/blob/v2.8.1/contracts/Timelock.sol
  * - https://github.com/Uniswap/v2-core/blob/v1.0.1/contracts/UniswapV2ERC20.sol
  */
-contract Relayer is Ownable {
+contract Relayer /* is Ownable */ {
     // TODO: gas limit per Call.
 
     struct Call {
@@ -46,6 +46,30 @@ contract Relayer is Ownable {
         vault[msg.sender] -= amount;
         (bool success, bytes memory ret) = msg.sender.call{value: amount}("");
         returnData = Result(success, ret, amount);
+    }
+
+    /**
+     * @dev Get bmsg from multiple `calls`.
+     */
+    function bmsg(Call[] memory calls) public pure returns (bytes32) {
+        return keccak256(
+            abi.encodePacked(
+                '\x19Ethereum Signed Message:\n32',
+                keccak256(abi.encode(calls))
+            )
+        );
+    }
+
+    /**
+     * @dev Get bmsg from a `singleCall`.
+     */
+    function bmsg(Call memory singleCall) public pure returns (bytes32) {
+        return keccak256(
+            abi.encodePacked(
+                '\x19Ethereum Signed Message:\n32',
+                keccak256(abi.encode(singleCall))
+            )
+        );
     }
 
     /**
