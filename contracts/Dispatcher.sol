@@ -81,7 +81,7 @@ contract Dispatcher is Ownable {
     }
 
     function trySingleCall(
-        Call memory singleCall, // bmsg
+        Call memory singleCall, // be a bmsg
         Sig memory singleSig
     ) public payable returns (
         uint256 blockNumber,
@@ -89,6 +89,7 @@ contract Dispatcher is Ownable {
     ) {
         blockNumber = block.number;
         
+        // bmsg
         bytes32 digest = keccak256(
             abi.encodePacked(
                 '\x19Ethereum Signed Message:\n32',
